@@ -1,0 +1,7 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    { "name": "Run AI Recruiter OS", "type": "node", "request": "launch", "program": "${workspaceFolder}/server.js", "runtimeArgs": ["--experimental-sqlite", "--no-warnings"], "console": "integratedTerminal" },
+    { "name": "Run the tests", "type": "node", "request": "launch", "program": "${workspaceFolder}/test.mjs", "runtimeArgs": ["--experimental-sqlite", "--no-warnings"], "console": "integratedTerminal" }
+  ]
+}

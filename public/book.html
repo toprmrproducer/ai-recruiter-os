@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book your interview</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f7f9;--ink:#0d1117;--mute:#5b6472;--line:#e3e6eb;--brand:#1f4fff;--ok:#0f9d58;--err:#c62828}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:720px;margin:0 auto;padding:32px 20px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:0 8px 30px rgba(13,17,23,.06)}
+h1{margin:0 0 6px;font-size:24px}.sub{color:var(--mute);margin:0 0 18px}
+.day{font-weight:700;margin:18px 0 8px}.slots{display:flex;flex-wrap:wrap;gap:8px}
+button.slot{font:inherit;font-weight:600;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}
+button.slot:hover{border-color:var(--brand);color:var(--brand)}
+.ok{color:var(--ok);font-weight:700;font-size:18px}.err{color:var(--err);margin-top:12px}
+a.btn{display:inline-block;background:var(--brand);color:#fff;text-decoration:none;padding:11px 16px;border-radius:10px;font-weight:600;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card" id="card"><p class="sub">Loading your interview slots...</p></div></div>
+<script>
+const $ = s => document.querySelector(s);
+const cid = new URLSearchParams(location.search).get('c') || '';
+const IST = 5.5 * 3600 * 1000;
+const dayLabel = iso => new Date(new Date(iso).getTime() + IST).toUTCString().slice(0, 11);
+const timeLabel = iso => { const d = new Date(new Date(iso).getTime() + IST); let h = d.getUTCHours(); const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; return `${h}:${String(d.getUTCMinutes()).padStart(2, '0')} ${ap}`; };
+const full = iso => `${dayLabel(iso)}, ${timeLabel(iso)} IST`;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function booked(iv) {
+  $('#card').innerHTML = `<div class="ok">Your interview is booked</div><h1>${esc(full(iv.starts_at))}</h1><p class="sub">Join with this link at that time. You will get a reminder before the interview.</p><a class="btn" href="${esc(iv.meet_link)}">Open interview link</a>`;
+}
+async function load() {
+  if (!cid) { $('#card').innerHTML = '<p class="err">This link is missing its code. Please use the link we sent you.</p>'; return; }
+  const r = await fetch('/api/public/slots?c=' + encodeURIComponent(cid));
+  const d = await r.json();
+  if (!r.ok) { $('#card').innerHTML = `<p class="err">${esc(d.error || 'Link not found')}</p>`; return; }
+  if (d.existing) return booked(d.existing);
+  if (!d.open) { $('#card').innerHTML = `<h1>Hi ${esc(d.candidate.first_name)}</h1><p class="sub">Interview booking is not open for your application yet. We will message you when it is.</p>`; return; }
+  const byDay = {};
+  for (const s of d.slots) (byDay[dayLabel(s)] ||= []).push(s);
+  $('#card').innerHTML = `<h1>Hi ${esc(d.candidate.first_name)}, pick your interview time</h1><p class="sub">${esc(d.candidate.job_title)} at ${esc(d.candidate.company)}. 30 minutes, online. Times are in IST.</p>
+    ${Object.entries(byDay).map(([day, list]) => `<div class="day">${day}</div><div class="slots">${list.map(s => `<button class="slot" data-t="${s}">${timeLabel(s)}</button>`).join('')}</div>`).join('') || '<p class="sub">No slots are free right now. Please check back soon.</p>'}<div class="err" id="err"></div>`;
+  document.querySelectorAll('button.slot').forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    const rr = await fetch('/api/public/book', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ candidate_id: cid, starts_at: b.dataset.t }) });
+    const dd = await rr.json();
+    if (!rr.ok) { $('#err').textContent = dd.error + ' Please pick another time.'; load(); return; }
+    booked(dd);
+  });
+}
+load();
+</script>
+</body>
+</html>

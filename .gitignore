@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+*.db
+*.db-*
+data/
+node_modules/
+call-allowlist.txt
+.DS_Store
+*.log
+mail-allowlist.txt
+*.key
+*.db.key

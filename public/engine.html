@@ -1,0 +1,73 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Engine Room</title>
+<link rel="stylesheet" href="/ui.css"><style>
+:root{--bg:#0d0f13;--p:#151820;--b:#262b36;--t:#e7eaf0;--m:#8a93a5;--a:#5eead4;--w:#f59e0b;--r:#f87171;--g:#4ade80}
+@media(prefers-color-scheme:light){:root{--bg:#f4f5f8;--p:#fff;--b:#dde1e8;--t:#12151b;--m:#647084;--a:#0d9488;--w:#b45309;--r:#dc2626;--g:#15803d}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:14px/1.5 system-ui}
+header{padding:14px 22px;border-bottom:1px solid var(--b);display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}header h1{font-size:17px;margin:0}header a{color:var(--a);font-size:13px}
+.wrap{max-width:1200px;margin:0 auto;padding:18px;display:grid;gap:16px;grid-template-columns:1fr 1fr}@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--p);border:1px solid var(--b);border-radius:12px;padding:16px;min-width:0}.full{grid-column:1/-1}
+h2{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--m);margin:0 0 10px}
+.flow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:13px}.node{border:1px solid var(--b);border-radius:8px;padding:6px 10px;background:var(--bg)}.node.on{border-color:var(--a)}.node.off{border-color:var(--r);color:var(--r)}.arr{color:var(--m)}
+table{width:100%;border-collapse:collapse}td{padding:4px 0;vertical-align:top}td:first-child{color:var(--m);width:38%}
+.ok{color:var(--g)}.no{color:var(--r)}.chip{display:inline-block;border:1px solid var(--b);border-radius:99px;padding:0 9px;font-size:12px;margin:2px 3px 2px 0}
+pre{margin:0;white-space:pre-wrap;word-break:break-word;font:12px/1.5 ui-monospace,Menlo,monospace;background:var(--bg);border:1px solid var(--b);border-radius:8px;padding:10px;max-height:260px;overflow:auto}
+textarea,button,input{font:inherit}textarea{width:100%;background:var(--bg);color:var(--t);border:1px solid var(--b);border-radius:8px;padding:8px}
+button,.btn{background:var(--a);color:#06201c;border:0;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer}
+.stage{border-left:3px solid var(--a);padding-left:12px;margin:14px 0}.stage h3{margin:0 0 6px;font-size:14px}
+.feed div{padding:5px 0;border-bottom:1px solid var(--b);font-size:13px}.feed small{color:var(--m)}.k{color:var(--a);font-weight:600}
+.warn{color:var(--w)}
+</style></head><body>
+<header><h1>Engine Room</h1><span style="color:var(--m)">what the recruiting backend is doing, live</span><a href="/dashboard">Recruiter dashboard</a><a href="/">Careers page</a></header>
+<div class="wrap">
+<div class="card full"><h2>How a candidate moves through the system</h2><div class="flow" id="flow"></div>
+<p style="color:var(--m);margin:10px 0 0;font-size:13px">Apply (PDF or text) &rarr; resume compacted into a summary plus gap and skill probes &rarr; sent to the Dograh agent as <code>initial_context</code> &rarr; agent calls the candidate &rarr; Dograh posts the transcript and answers back to the webhook &rarr; scored out of 100 &rarr; recruiter decides.</p></div>
+
+<div class="card"><h2>Dograh configuration</h2><table id="cfg"></table><div id="cfgWarn" class="warn" style="margin-top:8px"></div></div>
+<div class="card"><h2>AI model providers (for analysis, not the call)</h2><div id="llm"></div><h2 style="margin-top:14px">Data</h2><div id="counts"></div></div>
+
+<div class="card full"><h2>Resume pipeline lab: see exactly how a resume is fetched, compacted and handed to the agent</h2>
+<input type="file" id="pdf" accept="application/pdf,.pdf"> <span style="color:var(--m);font-size:12px">or paste text</span>
+<textarea id="txt" rows="5" placeholder="Resume text"></textarea><div style="margin-top:8px"><button id="run">Run pipeline (dry run, nothing is called)</button> <span id="runMsg" style="color:var(--m)"></span></div>
+<div id="stages"></div></div>
+
+<div class="card"><h2>Live feed: calls out and webhooks in</h2><div class="feed" id="trace"><small>Nothing yet. A call trigger or webhook shows here instantly.</small></div></div>
+<div class="card"><h2>Candidate event log</h2><div class="feed" id="events"></div></div>
+
+<div class="card full"><h2>Agent configuration (the prompts you paste into Dograh)</h2>
+<div id="prompts"></div></div>
+</div>
+<script>
+const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+async function overview(){
+  const o=await (await fetch('/api/engine/overview')).json(),d=o.dograh;
+  $('cfg').innerHTML=[['Base URL',d.base_url],['API key',d.api_key],['Screener agent UUID',d.screener_agent_uuid],['Reference agent UUID',d.reference_agent_uuid],['Reminder agent UUID',d.reminder_agent_uuid],['Web embed token',d.embed_token],['Webhook secret',d.webhook_secret],['Webhook path (give Dograh this)',d.webhook_path],
+   ['Phone calls ready',d.phone_ready?'<span class=ok>yes</span>':'<span class=no>no</span>'],['Web voice ready',d.web_ready?'<span class=ok>yes</span>':'<span class=no>no</span>']].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+  $('cfgWarn').textContent=d.phone_ready?'':'Dograh is not connected. Set DOGRAH_BASE_URL, DOGRAH_API_KEY, DOGRAH_AGENT_UUID in .env and restart. Until then calls cannot be placed; the lab below still shows exactly what would be sent.';
+  $('flow').innerHTML=[['Careers form / PDF',1],['Resume compaction',1],['Dograh agent call',d.phone_ready],['Webhook',1],['Scoring /100',1],['Recruiter dashboard',1]].map((n,i,a)=>`<span class="node ${n[1]?'on':'off'}">${n[0]}</span>${i<a.length-1?'<span class=arr>&rarr;</span>':''}`).join('');
+  $('llm').innerHTML=(o.llm.providers||[]).map(p=>`<span class=chip>${p.name}: ${p.configured?'<span class=ok>on</span>':'<span class=no>no key</span>'}</span>`).join('')+`<div style="color:var(--m);font-size:12px;margin-top:6px">${o.llm.providers?.some(p=>p.configured)?'':'No model keys: analysis uses rule-based fallbacks.'}</div>`;
+  $('counts').innerHTML=Object.entries(o.counts).map(([k,v])=>`<span class=chip>${k}: ${v}</span>`).join('');
+  $('prompts').innerHTML=Object.entries(o.prompts).map(([k,v])=>`<details ${k==='screener'?'open':''} style="margin-bottom:8px"><summary style="cursor:pointer">${k} agent</summary><pre>${esc(v)||'(file missing)'}</pre></details>`).join('');
+}
+async function feed(){
+  const t=await (await fetch('/api/engine/trace')).json();
+  if(t.trace.length)$('trace').innerHTML=t.trace.map(x=>`<div><span class=k>${x.kind==='dograh_call_out'?'CALL OUT':'WEBHOOK IN'}</span> <small>${x.at.slice(11,19)}</small><br>${x.kind==='dograh_call_out'?`to ${esc(x.to)} &middot; HTTP ${x.status} ${x.ok?'<span class=ok>ok</span>':'<span class=no>failed</span>'}<br><small>${esc(x.response)}</small>`:`run ${esc(x.run_id)||'?'} &middot; ${x.turns} transcript turns &middot; answers: ${esc((x.gathered||[]).join(', '))||'none'}`}</div>`).join('');
+  $('events').innerHTML=t.events.map(e=>`<div><span class=k>${esc(e.kind)}</span> <small>${esc(e.at)} ${esc(e.name||'')}</small><br>${esc(e.detail)}</div>`).join('')||'<small>No events yet.</small>';
+}
+$('pdf').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('runMsg').textContent='Reading PDF...';
+  const r=await fetch('/api/resume/pdf',{method:'POST',headers:{'Content-Type':'application/pdf'},body:await f.arrayBuffer()});const j=await r.json();
+  if(!r.ok){$('runMsg').textContent=j.error;return}$('txt').value=j.text;$('runMsg').textContent='PDF read ('+j.text.length+' chars).'};
+$('run').onclick=async()=>{$('runMsg').textContent='Running...';
+  const r=await fetch('/api/engine/preview',{method:'POST',body:JSON.stringify({resume_text:$('txt').value})});const j=await r.json();
+  if(!r.ok){$('runMsg').textContent=j.error;return}$('runMsg').textContent='Done for role: '+j.job.title;
+  const c=j.stage_2_compaction;
+  $('stages').innerHTML=`
+  <div class=stage><h3>1. Resume text fetched (${j.stage_1_resume_text.chars} chars)</h3><pre>${esc(j.stage_1_resume_text.text)}</pre></div>
+  <div class=stage><h3>2. Compaction: what the system extracted</h3>
+   <div>Summary: <b>${esc(c.summary)||'(nothing detected)'}</b></div>
+   <div style="margin-top:6px">Gaps: ${c.gaps.map(g=>`<span class=chip>${g.after} to ${g.until}</span>`).join('')||'<span class=chip>none</span>'} Skills: ${c.skills.map(s=>`<span class=chip>${esc(s)}</span>`).join('')||'<span class=chip>none</span>'}</div>
+   <div style="margin-top:6px">Questions the agent will ask from the resume:<ol>${c.probes.map(p=>`<li>${esc(p)}</li>`).join('')||'<li>none</li>'}</ol></div></div>
+  <div class=stage><h3>3. Context handed to Dograh (initial_context)</h3><pre>${esc(JSON.stringify(j.stage_3_initial_context,null,2))}</pre></div>
+  <div class=stage><h3>4. The exact request sent to Dograh <span class=${j.stage_4_dograh_request.would_send.startsWith('yes')?'ok':'warn'}>(${esc(j.stage_4_dograh_request.would_send)})</span></h3><pre>${esc(JSON.stringify(j.stage_4_dograh_request,null,2))}</pre></div>
+  <div class=stage><h3>5. What the agent is actually told (prompt with this candidate filled in)</h3><pre>${esc(j.stage_5_agent_prompt_rendered)}</pre></div>`};
+overview();feed();setInterval(feed,3000);setInterval(overview,15000);
+</script></body></html>

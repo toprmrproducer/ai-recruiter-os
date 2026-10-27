@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Careers | Recruit OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/ui.css">
+<style>
+:root{--bg:#f6f7f9;--ink:#0d1117;--mute:#5b6472;--line:#e3e6eb;--card:#fff;--brand:#1f4fff;--brand2:#0a2bb8;--ok:#0f9d58;--warn:#b26a00;--err:#c62828}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#0b1020;color:#fff}
+.nav{max-width:1100px;margin:auto;padding:18px 20px;display:flex;align-items:center;gap:10px}
+.logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#4d7cff,#1f4fff);display:grid;place-items:center;font-weight:800}
+.hero{max-width:1100px;margin:auto;padding:40px 20px 56px}
+.hero h1{font-size:40px;margin:0 0 10px;letter-spacing:-.02em}.hero p{color:#b8c1d6;max-width:620px;margin:0;line-height:1.6}
+main{max-width:1100px;margin:-32px auto 60px;padding:0 20px;display:grid;grid-template-columns:1.1fr .9fr;gap:24px}
+@media(max-width:860px){main{grid-template-columns:1fr}.hero h1{font-size:30px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:0 8px 30px rgba(13,17,23,.06)}
+h2{margin:0 0 4px;font-size:20px}.sub{color:var(--mute);margin:0 0 18px;font-size:14px}
+.jobs{display:grid;gap:10px;margin-bottom:18px}
+.job{border:1.5px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;display:flex;justify-content:space-between;gap:10px}
+.job.sel{border-color:var(--brand);background:#f3f6ff}.job b{display:block}.job small{color:var(--mute)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.grid{grid-template-columns:1fr}}
+label{font-size:13px;font-weight:600;display:block;margin-bottom:5px}
+input,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:14px;background:#fff}
+input:focus,textarea:focus{outline:2px solid #c9d6ff;border-color:var(--brand)}
+.full{grid-column:1/-1}
+button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:12px 16px;cursor:pointer}
+.primary{background:var(--brand);color:#fff}.primary:hover{background:var(--brand2)}.primary:disabled{opacity:.5;cursor:default}
+.ghost{background:#eef1f6;color:var(--ink)}
+.err{color:var(--err);font-size:13px;min-height:18px;margin-top:8px}
+.side h3{margin:0 0 8px}.side ul{padding-left:18px;color:var(--mute);line-height:1.7;margin:0}
+.opts{display:grid;gap:10px;margin-top:14px}
+.opt{border:1.5px solid var(--line);border-radius:12px;padding:14px;text-align:left;background:#fff}
+.opt:hover:not(:disabled){border-color:var(--brand)}.opt:disabled{opacity:.45;cursor:not-allowed}
+.opt b{display:block}.opt small{color:var(--mute);font-weight:400}
+.chat{border:1px solid var(--line);border-radius:12px;height:340px;overflow:auto;padding:12px;background:#fafbfc;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:85%;padding:10px 12px;border-radius:12px;font-size:14px;line-height:1.45}
+.msg.agent{background:#fff;border:1px solid var(--line);align-self:flex-start}.msg.cand{background:var(--brand);color:#fff;align-self:flex-end}
+.row{display:flex;gap:8px;margin-top:10px}.row input{flex:1}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;background:#fff3d6;color:var(--warn)}
+.done{text-align:center;padding:30px 10px}.done .big{font-size:44px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav"><div class="logo">R</div><b>Recruit OS</b><span style="margin-left:auto;color:#8e99b3;font-size:13px">Careers</span></div>
+  <div class="hero"><h1>A straightforward application, then a real conversation.</h1>
+  <p>Choose an open role, share your details, then complete a short AI screen. A recruiter reviews the result before any hiring decision.</p></div>
+</header>
+
+<main>
+  <section class="card" id="formCard">
+      <h2>Apply for a role</h2><p class="sub">Pick an open role and complete your details. The screener uses this context to avoid wasting your time.</p>
+    <div class="jobs" id="jobs"></div>
+    <form id="form" novalidate>
+      <div class="grid">
+        <div><label for="name">Full name</label><input id="name" name="name" autocomplete="name" required></div>
+        <div><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+        <div><label for="phone">Phone (for the AI call)</label><input id="phone" name="phone" autocomplete="tel" placeholder="+91 98xxxxxxxx" required></div>
+        <div><label for="city">Current city</label><input id="city" name="city" required></div>
+        <div><label for="years">Years of relevant experience</label><input id="years" name="years" type="number" min="0" step="0.5"></div>
+        <div><label for="notice_days">Notice period (days)</label><input id="notice_days" name="notice_days" type="number" min="0"></div>
+        <div><label for="expected_salary">Expected monthly salary (Rs)</label><input id="expected_salary" name="expected_salary" type="number" min="0" step="1000"></div>
+        <div><label for="skills">Key skills</label><input id="skills" name="skills" placeholder="CRM, cold calling, English"></div>
+        <div class="full"><label for="why">Why this role?</label><textarea id="why" name="why" rows="3"></textarea></div>
+        <div class="full"><label for="resume">Resume (optional, helps us skip questions)</label><input type="file" id="resumePdf" accept="application/pdf,.pdf" style="margin-bottom:6px"><div id="resumeMsg" style="font-size:12px;margin-bottom:6px"></div><textarea id="resume" name="resume" rows="4" placeholder="Paste the text of your resume"></textarea></div>
+        <div class="full"><label style="display:flex;gap:8px;align-items:flex-start;font-weight:500"><input type="checkbox" id="consent" style="width:auto;margin-top:3px"> <span>I agree that <b id="coName">the hiring team</b> may call and message me about this application, record and transcribe the AI screening call, and keep my details for future roles until I ask for them to be deleted.</span></label></div>
+      </div>
+      <div class="err" id="err"></div>
+      <button class="primary" id="submit" type="submit">Submit application</button>
+    </form>
+  </section>
+
+  <section class="card hidden" id="screenCard">
+    <h2 id="screenTitle">Your call is starting</h2><p class="sub" id="screenSub">Your phone is about to ring. Pick up and the AI recruiter will take it from here.</p>
+    <div class="opts hidden" id="opts"><button class="opt" id="optWeb"></button><button class="opt" id="optPhone"></button><button class="opt" id="optSim"></button></div>
+    <div class="err" id="screenErr"></div>
+    <button class="primary hidden" id="retryCall" type="button" style="margin-top:12px">Call me again</button>
+    <div id="simBox" class="hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px"><span class="tag">SIMULATED SCREEN, NOT A LIVE VOICE CALL</span>
+        <label style="font-weight:500;display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="speak" style="width:auto"> Read questions aloud</label></div>
+      <div class="chat" id="chat"></div>
+      <form class="row" id="ansForm"><input id="ans" placeholder="Type your answer" autocomplete="off"><button class="primary" type="submit">Send</button></form>
+    </div>
+    <div id="liveBox" class="hidden"><p class="sub" id="liveMsg"></p></div>
+    <div id="doneBox" class="done hidden"><div class="big">✓</div><h2>Screening complete</h2><p class="sub">Thanks. A recruiter will review your answers and get back to you.</p></div>
+  </section>
+
+  <aside class="card side" id="side">
+    <h3>What happens next</h3>
+    <ul><li>Choose a live role and apply</li><li>Complete a short AI screen</li><li>A recruiter reviews the result</li><li>Human interview for shortlisted applicants</li></ul>
+    <h3 style="margin-top:18px">Your data</h3>
+    <ul><li>The call is recorded and transcribed for the recruiter only.</li><li>You are told at the start you are speaking with an AI.</li></ul>
+  </aside>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+let jobs = [], jobId = null, cand = null, cfg = {};
+
+async function api(path, opts = {}) {
+  const r = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts, body: opts.body ? JSON.stringify(opts.body) : undefined });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`);
+  return d;
+}
+
+async function init() {
+  [jobs, cfg] = await Promise.all([api('/api/jobs'), api('/api/config')]);
+  jobs = jobs.filter(j => j.status !== 'closed');
+  if (!jobs.length) {
+    $('#jobs').innerHTML = '<div class="job"><div><b>No live roles yet</b><small>A recruiter must create and publish a role before applications open.</small></div></div>';
+    $('#submit').disabled = true;
+    $('#err').textContent = 'Applications are closed until a real role is published.';
+    return;
+  }
+  $('#jobs').innerHTML = jobs.map(j => `<div class="job" data-id="${j.id}" role="button" tabindex="0"><div><b>${j.title}</b><small>${j.location} · ${j.min_years}+ yrs</small></div><small>${j.company}</small></div>`).join('');
+  document.querySelectorAll('.job').forEach(el => {
+    const pick = () => { jobId = el.dataset.id; document.querySelectorAll('.job').forEach(x => x.classList.toggle('sel', x === el)); const j = jobs.find(x => x.id === jobId); if (j && $('#coName')) $('#coName').textContent = j.company; if (j && $('#applyingFor')) { $('#applyingFor').innerHTML = `You are applying for: <span style="color:#2563eb">${j.title}</span> at ${j.company}`; $('#applyingFor').style.color = ''; $('#submit').disabled = false; } };
+    el.onclick = pick; el.onkeydown = e => (e.key === 'Enter' || e.key === ' ') && pick();
+  });
+  // Never guess the role: one open role is selected for you, several roles need a clear choice (or a ?role= link).
+  $('#submit').insertAdjacentHTML('beforebegin', '<div id="applyingFor" style="margin:0 0 10px;font-weight:600"></div>');
+  const want = new URLSearchParams(location.search).get('role');
+  const preset = jobs.length === 1 ? jobs[0].id : (jobs.find(j => want && (j.id === want || j.id.startsWith(want)))?.id || null);
+  if (preset) document.querySelector(`.job[data-id="${preset}"]`).click();
+  else { $('#submit').disabled = true; $('#applyingFor').textContent = 'Choose the role you are applying for above.'; $('#applyingFor').style.color = '#b45309'; }
+  $('#optWeb').disabled = !cfg.dograh_web;
+  $('#optPhone').disabled = !cfg.dograh_phone;
+}
+
+$('#form').onsubmit = async e => {
+  e.preventDefault();
+  $('#err').textContent = '';
+  const data = Object.fromEntries(new FormData(e.target));
+  data.job_id = jobId;
+  data.consent = $('#consent').checked;
+  data.source = new URLSearchParams(location.search).get('src') || 'careers';
+  if (!jobId) { $('#err').textContent = 'Please choose the role you are applying for.'; return; }
+  if (!data.consent) { $('#err').textContent = 'Please tick the consent box so we can call you.'; return; }
+  $('#submit').disabled = true;
+  try {
+    cand = await api('/api/applications', { method: 'POST', body: data });
+    $('#formCard').classList.add('hidden');
+    $('#screenCard').classList.remove('hidden');
+    const first = data.name.split(' ')[0];
+    $('#screenSub').textContent = `Thanks ${first}! Your phone is about to ring. Pick up and the AI recruiter will take it from here (about 6 minutes).`;
+    startCall();
+  } catch (x) { $('#err').textContent = x.message; }
+  $('#submit').disabled = false;
+};
+
+function startCall() { begin(cfg.dograh_phone ? 'phone' : cfg.dograh_web ? 'web' : 'simulator'); }
+$('#retryCall').onclick = () => { $('#retryCall').classList.add('hidden'); startCall(); };
+async function begin(mode) {
+  $('#screenErr').textContent = '';
+  try {
+    const s = await api(`/api/candidates/${cand.id}/screenings`, { method: 'POST', body: { mode } });
+    $('#opts').classList.add('hidden');
+    if (mode === 'simulator') return runSim(s);
+    $('#liveBox').classList.remove('hidden');
+    if (mode === 'phone') { $('#screenTitle').textContent = 'Calling you now'; $('#liveMsg').textContent = 'Pick up, the AI will introduce itself. The call takes about 6 minutes and you can close this page.'; return; }
+    // web: load the Dograh widget with the form answers as context
+    $('#liveMsg').textContent = 'Connecting to the AI screener. Allow microphone access when asked.';
+    const sc = document.createElement('script');
+    sc.src = `/dograh-widget.js?token=${encodeURIComponent(cfg.embed_token)}&apiEndpoint=${encodeURIComponent(cfg.dograh_base)}`;
+    sc.setAttribute('data-dograh-context', JSON.stringify({ ...cand.context, source: 'web' }));
+    sc.onload = () => {
+      const W = window.DograhWidget;
+      W.onCallEnd(() => { $('#liveBox').classList.add('hidden'); $('#doneBox').classList.remove('hidden'); });
+      W.onError(err => { $('#screenErr').textContent = 'Voice call error: ' + (err?.message || err); });
+      W.start();
+    };
+    document.body.appendChild(sc);
+  } catch (x) { $('#screenErr').textContent = x.message; $('#screenTitle').textContent = 'We could not start your call'; $('#screenSub').textContent = 'Your application was received. Please try the call again below.'; $('#retryCall').classList.remove('hidden'); }
+}
+$('#optWeb').onclick = () => begin('web');
+$('#optPhone').onclick = () => begin('phone');
+$('#optSim').onclick = () => begin('simulator');
+
+function runSim(s) {
+  const ctx = cand.context, qs = s.questions, transcript = [], answers = {};
+  let i = -1;
+  $('#simBox').classList.remove('hidden');
+  const say = (role, text) => {
+    transcript.push({ role, text });
+    const d = document.createElement('div'); d.className = `msg ${role === 'agent' ? 'agent' : 'cand'}`; d.textContent = text;
+    $('#chat').appendChild(d); $('#chat').scrollTop = 1e9;
+    if (role === 'agent' && $('#speak').checked && 'speechSynthesis' in window) { speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance(text)); }
+  };
+  const next = async () => {
+    i++;
+    if (i < qs.length) {
+      let q = qs[i].ask;
+      if (qs[i].key === 'relocation_ok') q = `This role is based in ${ctx.job_location}. You mentioned you are in ${ctx.candidate_city}. Can you work from there?`;
+      if (qs[i].key === 'years_experience' && ctx.form_years_experience) q = `Your form says ${ctx.form_years_experience} years of experience. How many years of that is directly relevant to ${ctx.job_title}?`;
+      return say('agent', q);
+    }
+    say('agent', 'That is everything. Thank you, a recruiter will review this today.');
+    $('#ansForm').classList.add('hidden');
+    try { await api(`/api/screenings/${s.screening_id}/complete`, { method: 'POST', body: { transcript, answers } }); }
+    catch (x) { $('#screenErr').textContent = x.message; return; }
+    setTimeout(() => { $('#simBox').classList.add('hidden'); $('#doneBox').classList.remove('hidden'); }, 900);
+  };
+  $('#ansForm').onsubmit = e => {
+    e.preventDefault();
+    const v = $('#ans').value.trim(); if (!v) return;
+    answers[qs[i].key] = v; say('candidate', v); $('#ans').value = ''; next();
+  };
+  say('agent', `Hi ${ctx.candidate_name.split(' ')[0]}, this is the Recruit OS AI screener. This screen is recorded for the recruiter. It takes about three minutes, six questions, for the ${ctx.job_title} role.`);
+  next();
+  $('#ans').focus();
+}
+init().catch(e => { $('#err').textContent = 'Could not load jobs: ' + e.message; });
+
+document.getElementById('resumePdf').addEventListener('change', async e => {
+  const f = e.target.files[0], msg = document.getElementById('resumeMsg'); if (!f) return;
+  msg.textContent = 'Reading PDF...';
+  try {
+    const r = await fetch('/api/resume/pdf', { method: 'POST', headers: { 'Content-Type': 'application/pdf' }, body: await f.arrayBuffer() });
+    const j = await r.json(); if (!r.ok) throw new Error(j.error);
+    document.getElementById('resume').value = j.text; msg.textContent = 'Resume read from ' + f.name + '. Check the text below.';
+  } catch (err) { msg.style.color = '#c0392b'; msg.textContent = err.message; }
+});
+</script>
+</body>
+</html>

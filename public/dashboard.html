@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recruiting System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/ui.css">
+<style id="min">
+/* minimal view for demos: add ?full=1 to the URL to show every section */
+main{margin:0 auto 72px!important}
+#nav a[data-v=team],#nav a[data-v=voice],#nav a[href="/"],#nav a[data-s=interviews],#nav a[data-s=offers],#nav a[data-s=automation],#nav a[data-s=analytics],#nav a[data-s=assistant],#nav .navsec,#pillVoice,#pillHelp,.pill.who,#voiceFoot{display:none!important}
+</style>
+<script>if(/[?&]full=1/.test(location.search))document.getElementById('min').remove()</script>
+<style>
+:root{--bg:#0a0a0a;--panel:rgba(255,255,255,.035);--panel2:rgba(255,255,255,.06);--line:rgba(255,255,255,.08);--ink:#eef0f4;--mute:#8a90a0;--acc:#7cf5c8;--acc2:#5b8cff;--amber:#ffb547;--red:#ff5d6c}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;
+ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1px),radial-gradient(1200px 600px at 80% -10%,rgba(91,140,255,.14),transparent 60%),radial-gradient(900px 500px at -10% 110%,rgba(124,245,200,.08),transparent 60%);
+ background-size:22px 22px,auto,auto}
+.app{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+aside{border-right:1px solid var(--line);background:rgba(10,10,10,.6);backdrop-filter:blur(14px);padding:18px 14px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 6px 18px}
+.mark{width:32px;height:32px;border-radius:9px;background:conic-gradient(from 210deg,var(--acc),var(--acc2),var(--acc));display:grid;place-items:center;color:#05110c;font-weight:800;box-shadow:0 0 24px rgba(124,245,200,.35)}
+.brand b{letter-spacing:.08em;font-size:13px}.ver{font-family:'JetBrains Mono';font-size:10px;color:var(--mute);border:1px solid var(--line);border-radius:6px;padding:1px 5px;margin-left:auto}
+nav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;color:var(--mute);text-decoration:none;font-weight:500;margin-bottom:2px;cursor:pointer}
+nav a:hover{background:var(--panel);color:var(--ink)}nav a.on{background:var(--panel2);color:var(--ink);box-shadow:inset 2px 0 0 var(--acc)}
+nav i{font-style:normal;width:18px;text-align:center;opacity:.8}
+.navsec{font-size:10px;letter-spacing:.14em;color:#5b6070;margin:16px 10px 6px}
+.side-foot{position:absolute;bottom:16px;left:14px;right:14px;font-size:12px;color:var(--mute);border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel)}
+main{padding:22px 26px 40px;min-width:0}
+.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.top h1{font-size:22px;margin:0 12px 0 0;letter-spacing:-.01em}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:5px 10px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--mute)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--mute)}.dot.g{background:var(--acc);box-shadow:0 0 8px var(--acc)}.dot.a{background:var(--amber)}
+.top .sp{margin-left:auto}
+.btn{font:inherit;font-weight:600;font-size:13px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);padding:8px 12px;border-radius:9px;cursor:pointer;text-decoration:none}
+.btn:hover{border-color:rgba(255,255,255,.2)}.btn.acc{background:var(--acc);color:#04120c;border-color:transparent}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:1200px){.kpis{grid-template-columns:repeat(3,1fr)}}
+.kpi{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:14px 16px;position:relative;overflow:hidden}
+.kpi small{color:var(--mute);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.kpi .v{font-size:28px;font-weight:700;margin-top:6px;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12px;color:var(--mute);margin-top:2px}
+.kpi:after{content:'';position:absolute;inset:auto -30% -60% auto;width:120px;height:120px;border-radius:50%;background:radial-gradient(rgba(124,245,200,.12),transparent 70%)}
+.board{display:grid;grid-template-columns:repeat(5,minmax(200px,1fr));gap:12px;overflow-x:auto;padding-bottom:6px}
+.col{border:1px solid var(--line);background:rgba(255,255,255,.02);border-radius:14px;padding:10px;min-height:320px}
+.col h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin:4px 4px 10px;display:flex;justify-content:space-between}
+.card{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;transition:.15s}
+.card:hover{border-color:rgba(124,245,200,.4);transform:translateY(-1px)}
+.card .n{font-weight:600}.card .j{color:var(--mute);font-size:12px;margin-top:2px}
+.card .meta{display:flex;align-items:center;gap:8px;margin-top:10px}
+.ring{--p:0;width:38px;height:38px;border-radius:50%;background:conic-gradient(var(--c,var(--acc)) calc(var(--p)*1%),rgba(255,255,255,.08) 0);display:grid;place-items:center;flex:none}
+.ring span{width:30px;height:30px;border-radius:50%;background:#111;display:grid;place-items:center;font-size:11px;font-weight:700}
+.v-Strong{color:var(--acc)}.v-Maybe{color:var(--amber)}.v-Reject{color:var(--red)}.v-Pending{color:var(--mute)}
+.chip{font-size:11px;padding:2px 7px;border-radius:99px;border:1px solid var(--line);color:var(--mute)}
+.chip.red{color:var(--red);border-color:rgba(255,93,108,.35)}.chip.amber{color:var(--amber);border-color:rgba(255,181,71,.35)}
+.empty{color:#555b68;font-size:12px;text-align:center;padding:20px 0}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:min(620px,100vw);background:#0e0f12;border-left:1px solid var(--line);transform:translateX(100%);transition:.25s;overflow:auto;z-index:10;box-shadow:-30px 0 60px rgba(0,0,0,.5)}
+.drawer.open{transform:none}
+.dh{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:center;position:sticky;top:0;background:#0e0f12;z-index:1}
+.dh h2{margin:0;font-size:19px}.dh .x{margin-left:auto}
+.sec{padding:16px 22px;border-bottom:1px solid var(--line)}
+.sec h4{margin:0 0 10px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.bar{display:grid;grid-template-columns:130px 1fr 52px;gap:10px;align-items:center;margin:7px 0;font-size:13px}
+.track{height:7px;border-radius:9px;background:rgba(255,255,255,.07);overflow:hidden}.track b{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--acc2),var(--acc))}
+.bar em{font-style:normal;color:var(--mute);font-size:11px;grid-column:2/4;margin-top:-4px}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--mute);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.tr{display:flex;flex-direction:column;gap:6px;max-height:320px;overflow:auto}
+.m{padding:8px 10px;border-radius:10px;max-width:88%;line-height:1.45}.m.agent{background:var(--panel2)}.m.candidate{background:rgba(91,140,255,.16);align-self:flex-end}
+.fb{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fb .btn.yes.on{background:var(--acc);color:#04120c}.fb .btn.no.on{background:var(--red);color:#fff}
+.fb input{flex:1;min-width:160px;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:8px 10px;font:inherit}
+.stages{display:flex;gap:6px;flex-wrap:wrap}
+.ev{font-size:12px;color:var(--mute);margin:4px 0}.ev b{color:var(--ink);font-weight:500}
+.tabview{display:none}.tabview.on{display:block}
+.evalbox{display:grid;grid-template-columns:1fr 1fr;gap:12px}.evalbox ul{margin:0;padding-left:16px;line-height:1.6}.evalbox h5{margin:0 0 6px;font-size:12px}
+.pro{color:var(--acc)}.con{color:var(--red)}.blocker{border:1px solid rgba(255,93,108,.4);background:rgba(255,93,108,.08);color:#ffb3ba;border-radius:10px;padding:10px 12px;margin-top:10px}
+.hireok{border:1px solid rgba(124,245,200,.35);background:rgba(124,245,200,.07);color:var(--acc);border-radius:10px;padding:10px 12px;margin-top:10px}
+.worklog{display:grid;grid-template-columns:120px 1fr 90px auto;gap:8px}.worklog select,.worklog input,.who select{background:#15161a;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:8px;font:inherit}
+.team{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}.stat{display:flex;justify-content:space-between;color:var(--mute);font-size:13px;margin:5px 0}.stat b{color:var(--ink)}
+.jobcard{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:16px;margin-bottom:12px}
+@media(max-width:900px){.app{grid-template-columns:1fr}aside{display:none}.kpis{grid-template-columns:repeat(2,1fr)}}
+/* Light operational surface. Keep the information hierarchy, remove the demo-night-theme treatment. */
+:root{--bg:#f8fafc;--panel:#fff;--panel2:#f1f5f9;--line:#dbe3ee;--ink:#0f172a;--mute:#64748b;--acc:#0f766e;--acc2:#2563eb;--amber:#b45309;--red:#be123c}
+body{background:#f8fafc;background-image:radial-gradient(rgba(15,23,42,.035) 1px,transparent 1px);background-size:22px 22px}
+aside{background:rgba(255,255,255,.92);box-shadow:8px 0 24px rgba(15,23,42,.035)}
+.mark{color:#fff;box-shadow:none}.kpi,.col,.card,.jobcard,.side-foot{box-shadow:0 1px 2px rgba(15,23,42,.035)}
+.col{background:#f8fafc}.ring{background:conic-gradient(var(--c,var(--acc)) calc(var(--p)*1%),#e2e8f0 0)}.ring span{background:#fff}
+.drawer,.dh{background:#fff}.track{background:#e2e8f0}.m.agent,.worklog select,.worklog input,.who select{background:#fff}.m.candidate{background:#dbeafe;color:#172554}.blocker{color:#9f1239}.hireok{color:#065f46}
+
+/* ---- v3 professional layout: no KPI strip, per-page charts, kanban, agent bar, guide */
+.kpis{display:none!important}
+.agentbar{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;border:1px solid var(--line);background:#fff;border-radius:16px;padding:14px 18px;margin-bottom:16px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#0f766e);color:#fff;display:grid;place-items:center;font-weight:700;font-size:18px}
+.agentbar .sub{color:var(--mute);font-size:12px;margin-top:2px;max-width:640px}
+.agstats{display:flex;gap:22px}.agstats div{text-align:right}.agstats small{display:block;color:var(--mute);font-size:10px;letter-spacing:.1em;text-transform:uppercase}.agstats b{font-size:22px;font-variant-numeric:tabular-nums}
+.livelist{grid-column:1/-1;border-top:1px dashed var(--line);padding-top:10px;font-size:12px;color:var(--mute);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.livechip{display:inline-flex;gap:6px;align-items:center;background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;border-radius:99px;padding:3px 10px;font-weight:500}
+.livechip i{width:7px;height:7px;border-radius:50%;background:#10b981;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.25}}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-bottom:16px}
+.cc{border:1px solid var(--line);background:#fff;border-radius:16px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.cc h4{margin:0 0 12px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);font-weight:600}
+.donutwrap{display:flex;gap:16px;align-items:center}.donutwrap svg{flex:none}
+.legend{display:grid;gap:5px;font-size:12px;min-width:0}.legend div{display:flex;align-items:center;gap:7px;white-space:nowrap}.legend i{width:9px;height:9px;border-radius:3px;flex:none}.legend b{margin-left:auto;padding-left:10px;font-variant-numeric:tabular-nums}
+.hb{display:grid;grid-template-columns:minmax(80px,120px) 1fr 30px;gap:9px;align-items:center;font-size:12px;margin:7px 0}.hb .tk{height:9px;border-radius:9px;background:#eef2f7;overflow:hidden}.hb .tk b{display:block;height:100%;border-radius:9px}
+.hb span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.histo{display:flex;align-items:flex-end;gap:10px;height:110px}.histo div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;font-size:11px;color:var(--mute)}.histo b{display:block;width:100%;border-radius:6px 6px 0 0;min-height:3px}
+.nodata{color:#94a3b8;font-size:12px;padding:18px 0;text-align:center}
+.kb{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(232px,1fr);gap:12px;overflow-x:auto;padding-bottom:10px}
+.kb .col{background:#f1f5f9;border:1px solid #e2e8f0;min-height:420px;transition:.12s}
+.kb .col h3{display:flex;align-items:center;gap:8px;color:#334155}
+.kb .col h3 i{width:9px;height:9px;border-radius:3px}.kb .col h3 span{margin-left:auto;background:#fff;border:1px solid var(--line);border-radius:99px;padding:1px 8px;font-size:11px}
+.kb .col.over{background:#e0e7ff;border-color:#818cf8}
+.kb .card{cursor:grab}.kb .card.drag{opacity:.4}
+.rank{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#e2e8f0;color:#334155;font-size:10px;font-weight:700;margin-right:6px}
+.hint{color:var(--mute);font-size:12px;margin:-6px 0 12px}
+.guide h3{margin:22px 0 8px;font-size:16px}.guide ol,.guide ul{line-height:1.75;padding-left:20px;margin:6px 0}.guide .step{display:grid;grid-template-columns:30px 1fr;gap:12px;margin:12px 0}
+.guide .step em{font-style:normal;width:28px;height:28px;border-radius:50%;background:#2563eb;color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px}
+.guide code,.guide kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12px}
+.guide .qa{border:1px solid var(--line);background:#fff;border-radius:12px;padding:14px 16px;margin:10px 0}.guide .qa b{display:block;margin-bottom:4px}
+#roleFilter{background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:6px 8px;font:inherit;font-size:12px}
+
+.jobcard details input:not([type=checkbox]),.jobcard details textarea{background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px;font:inherit;color:var(--ink)}
+.jobcard details label{font-size:12px;font-weight:600;display:block;margin:8px 0 3px}.jobcard details label input[type=checkbox]{margin-right:6px}
+@media(max-width:900px){.agentbar{grid-template-columns:1fr}.agstats div{text-align:left}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="brand"><div class="mark" id="brandMark">R</div><b id="brandName">RECRUIT&nbsp;OS</b><span class="ver">LIVE</span></div>
+  <nav id="nav">
+    <a class="on" data-v="pipeline"><i>▦</i>Pipeline</a>
+    <a data-v="candidates"><i>☰</i>Candidates</a>
+    <a data-v="calls"><i>☏</i>Calls</a>
+    <a data-v="team"><i>◎</i>Team</a>
+    <a data-v="jobs"><i>◇</i>Jobs</a>
+    <a data-v="criteria"><i>✓</i>Evaluation criteria</a>
+    <div class="navsec">VOICE</div>
+    <a data-v="voice"><i>◉</i>Dograh agent</a>
+    <a href="/" target="_blank"><i>↗</i>Careers page</a>
+  </nav>
+  <div class="side-foot" id="voiceFoot">Checking voice link…</div>
+</aside>
+<main>
+  <div class="top">
+    <h1>Hiring control center</h1>
+    <span class="pill"><span class="dot g"></span>Live · refresh 4s</span>
+    <span class="pill" id="pillVoice"><span class="dot"></span>Dograh</span>
+    <span class="pill" id="pillHelp">AI helpful: -</span>
+    <span class="pill who">You are <select id="who"></select></span>
+    <span class="pill" style="padding:3px 8px">Role <select id="roleFilter"><option value="">All roles</option></select></span>
+    <a class="btn acc sp" href="/" target="_blank">+ New application</a>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+  <div class="agentbar" id="agent"></div>
+
+  <div class="tabview on" id="v-pipeline"><div class="charts" id="chPipe"></div><div id="bulkWrap" style="display:flex;gap:10px;align-items:center;margin-bottom:8px"></div><p class="hint">Ranked by AI score, best first. Drag a card to another column to move the candidate.</p><div class="kb" id="board"></div></div>
+  <div class="tabview" id="v-candidates"><div class="charts" id="chCand"></div><div class="jobcard" style="padding:6px 10px"><table id="ctable"></table></div></div>
+  <div class="tabview" id="v-calls"><div class="charts" id="chCalls"></div><div class="jobcard" style="padding:6px 10px"><table id="calls"></table></div></div>
+  <div class="tabview" id="v-team"><div class="team" id="team"></div></div>
+  <div class="tabview" id="v-criteria"><div id="criteria"></div></div>
+  <div class="tabview" id="v-jobs"><div id="jobsList"></div></div>
+  <div class="tabview" id="v-voice"><div class="jobcard" id="voiceInfo"></div></div>
+</main>
+</div>
+
+<div class="drawer" id="drawer"></div>
+
+<script>function maskPhone(p){p=String(p||'');return p.length>6?p.slice(0,3)+' \u2022\u2022\u2022\u2022\u2022 \u2022\u2022'+p.slice(-2):p}</script>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function askPassword() {
+  return new Promise(resolve => {
+    const o = document.createElement('div');
+    o.style.cssText = 'position:fixed;inset:0;background:rgba(248,250,252,.97);display:flex;align-items:center;justify-content:center;z-index:99';
+    o.innerHTML = '<form style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:28px;width:320px;box-shadow:0 10px 30px rgba(15,23,42,.08);display:grid;gap:14px"><b style="font-size:18px">Recruit OS</b><span style="color:#64748b;font-size:13px">Enter the recruiter password</span><input type="password" style="padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:15px"><button style="padding:10px;border:0;border-radius:8px;background:#2563eb;color:#fff;font-weight:600;font-size:14px;cursor:pointer">Sign in</button></form>';
+    document.body.appendChild(o);
+    const f = o.querySelector('form'), i = o.querySelector('input'); i.focus();
+    f.onsubmit = e => { e.preventDefault(); const v = i.value; o.remove(); resolve(v || null); };
+  });
+}
+let loginP = null, noPromptUntil = 0;
+function needLogin() {
+  if (Date.now() < noPromptUntil) throw new Error('login required');
+  if (!loginP) loginP = (async () => {
+    const pw = await askPassword();
+    if (!pw) { noPromptUntil = Date.now() + 60000; throw new Error('login required'); }
+    const r = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw }) });
+    if (!r.ok) { noPromptUntil = Date.now() + 5000; throw new Error('wrong password'); }
+  })().finally(() => { loginP = null; });
+  return loginP;
+}
+const api = async (p, o = {}) => {
+  const r = await fetch(p, { headers: { 'Content-Type': 'application/json' }, ...o, body: o.body ? JSON.stringify(o.body) : undefined });
+  const d = await r.json().catch(() => ({}));
+  if (r.status === 401) { await needLogin(); return api(p, o); }
+  if (!r.ok) throw new Error(d.error || 'request failed');
+  return d;
+};
+const COLS = [['applied', 'Applied'], ['screening', 'Screening'], ['review', 'Review'], ['shortlisted', 'Shortlisted'], ['interview', 'Interview']];
+let open = null, cfg = {};
+const vclass = v => 'v-' + String(v || 'Pending').split(' ')[0];
+const ringColor = v => v === 'Strong' ? 'var(--acc)' : v === 'Maybe' ? 'var(--amber)' : v === 'Reject' ? 'var(--red)' : '#555';
+
+function ring(total, verdict) { return `<div class="ring" style="--p:${total ?? 0};--c:${ringColor(verdict)}"><span>${total ?? '-'}</span></div>`; }
+
+
+const STAGE_COL = { applied: '#94a3b8', screening: '#2563eb', review: '#7c3aed', shortlisted: '#0f766e', interview: '#0891b2', hired: '#15803d', rejected: '#be123c' };
+const VERDICT_COL = { Strong: '#0f766e', Maybe: '#d97706', Reject: '#be123c', Pending: '#94a3b8' };
+function donut(title, items, center) {
+  const tot = items.reduce((a, i) => a + i.value, 0);
+  if (!tot) return `<div class="cc"><h4>${title}</h4><div class="nodata">No data yet</div></div>`;
+  const R = 42, C = 2 * Math.PI * R; let off = 0;
+  const segs = items.filter(i => i.value > 0).map(i => { const len = i.value / tot * C; const s = `<circle r="${R}" cx="60" cy="60" fill="none" stroke="${i.color}" stroke-width="18" stroke-dasharray="${len} ${C - len}" stroke-dashoffset="${-off}" transform="rotate(-90 60 60)"></circle>`; off += len; return s; }).join('');
+  return `<div class="cc"><h4>${title}</h4><div class="donutwrap"><svg width="120" height="120" viewBox="0 0 120 120"><circle r="${R}" cx="60" cy="60" fill="none" stroke="#eef2f7" stroke-width="18"></circle>${segs}<text x="60" y="58" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">${center ?? tot}</text><text x="60" y="74" text-anchor="middle" font-size="9" fill="#64748b">${center === undefined ? 'total' : ''}</text></svg>
+    <div class="legend">${items.filter(i => i.value > 0).map(i => `<div><i style="background:${i.color}"></i>${esc(i.label)}<b>${i.value}</b></div>`).join('')}</div></div></div>`;
+}
+function hbars(title, items, color = '#2563eb') {
+  const max = Math.max(1, ...items.map(i => i.value));
+  return `<div class="cc"><h4>${title}</h4>${items.length ? items.map(i => `<div class="hb"><span title="${esc(i.label)}">${esc(i.label)}</span><div class="tk"><b style="width:${i.value / max * 100}%;background:${i.color || color}"></b></div><em style="font-style:normal;text-align:right">${i.value}</em></div>`).join('') : '<div class="nodata">No data yet</div>'}</div>`;
+}
+function histo(title, bins) {
+  const max = Math.max(1, ...bins.map(b => b.value));
+  return `<div class="cc"><h4>${title}</h4><div class="histo">${bins.map(b => `<div>${b.value}<b style="height:${b.value / max * 80}px;background:${b.color}"></b>${b.label}</div>`).join('')}</div></div>`;
+}
+let roleSel = ''; try { roleSel = localStorage.getItem('rs_role') || ''; } catch {}
+let dragging = false;
+const ageSec = iso => Math.max(0, Math.round((Date.now() - new Date(String(iso).replace(' ', 'T') + (String(iso).includes('Z') || String(iso).includes('+') ? '' : 'Z')).getTime()) / 1000));
+const isLive = x => x.status === 'in_progress' && ageSec(x.started_at) < 1800;
+const callState = x => (x.status === 'in_progress' && !isLive(x) ? 'abandoned' : x.status);
+const clock = iso => { const s = Math.max(0, Math.round((Date.now() - new Date(String(iso).replace(' ', 'T') + (String(iso).includes('Z') || String(iso).includes('+') ? '' : 'Z')).getTime()) / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+
+async function load() {
+  const [allCands, st, jobsAll, allCalls, qs] = await Promise.all([api('/api/candidates'), api('/api/stats'), api('/api/jobs'), api('/api/calls'), api('/api/import/queue').catch(() => ({ waiting: 0, recent: [] }))]);
+  const sel = $('#roleFilter');
+  if (sel && sel.options.length !== jobsAll.length + 1) { sel.innerHTML = '<option value="">All roles</option>' + jobsAll.map(j => `<option value="${esc(j.id)}">${esc(j.title)}${j.status === 'closed' ? ' (closed)' : ''}</option>`).join(''); sel.value = roleSel; sel.onchange = () => { roleSel = sel.value; try { localStorage.setItem('rs_role', roleSel); } catch {} load(); }; }
+  const jobTitleById = Object.fromEntries(jobsAll.map(j => [j.id, j.title]));
+  const cands = roleSel ? allCands.filter(c => c.job_id === roleSel) : allCands;
+  const calls = roleSel ? allCalls.filter(c => c.job_title === jobTitleById[roleSel]) : allCalls;
+  const rate = st.feedback_count ? Math.round((st.helpful_yes / st.feedback_count) * 100) + '%' : '-';
+  $('#pillHelp').textContent = `AI helpful: ${rate} (${st.feedback_count} votes)`;
+
+  // agent status: which agent is live, who it is talking to right now, about which role
+  const live = allCalls.filter(x => isLive(x) && x.mode === 'phone');
+  const openRoles = jobsAll.filter(j => j.status !== 'closed');
+  $('#agent').innerHTML = `<div class="av">${esc((cfg.agent_name || 'P')[0])}</div><div><b style="font-size:15px">${esc(cfg.agent_name || 'Priya')}, AI recruiting screener</b> <span class="chip" style="color:${cfg.dograh_api_live ? 'var(--acc)' : 'var(--amber)'}">${cfg.dograh_api_live ? 'Voice engine live' : 'Voice engine offline'}</span>
+    <div class="sub">One agent serves every role. On each call it speaks about the role of the candidate it is phoning: that role's title, location, skills and budget. It confirms the application, asks 3 to 4 resume questions and can negotiate inside the role's budget.</div></div>
+    <div class="agstats"><div><small>On a call now</small><b>${live.length}</b></div><div><small>Queued to call</small><b>${qs.waiting}</b></div><div><small>Open roles</small><b>${openRoles.length}</b></div><div><small>Candidates</small><b>${allCands.length}</b></div></div>
+    <div class="livelist">${live.length ? live.map(x => `<span class="livechip"><i></i>${esc(x.name)} · ${esc(x.job_title)} · ${clock(x.started_at)}</span>`).join('') : '<span>No call in progress.</span>'}<span style="margin-left:auto">Open roles: ${openRoles.map(j => esc(j.title)).join(', ') || 'none'}</span></div>`;
+
+  // pipeline charts
+  const byStage = ['applied', 'screening', 'review', 'shortlisted', 'interview', 'hired', 'rejected'].map(s => ({ label: s[0].toUpperCase() + s.slice(1), value: cands.filter(c => c.stage === s).length, color: STAGE_COL[s] }));
+  const byVerdict = ['Strong', 'Maybe', 'Reject', 'Pending'].map(v => ({ label: v, value: cands.filter(c => (c.verdict ? c.verdict.split(' ')[0] : 'Pending') === v).length, color: VERDICT_COL[v] }));
+  const scored = cands.filter(c => c.total != null);
+  const bins = [['0-39', 0, 39, '#be123c'], ['40-54', 40, 54, '#d97706'], ['55-74', 55, 74, '#2563eb'], ['75+', 75, 100, '#0f766e']].map(([label, a, b, color]) => ({ label, color, value: scored.filter(c => c.total >= a && c.total <= b).length }));
+  $('#chPipe').innerHTML = donut('Where candidates are', byStage) + donut('AI verdict', byVerdict, scored.length ? Math.round(scored.reduce((a, c) => a + c.total, 0) / scored.length) : '-') + histo('Score spread', bins);
+
+  // kanban, ranked by score, draggable
+  const rank = (a, b) => (b.total ?? -1) - (a.total ?? -1);
+  const KB = [['applied', 'Applied'], ['screening', 'Screening'], ['review', 'Review'], ['shortlisted', 'Shortlisted'], ['interview', 'Interview'], ['hired', 'Hired'], ['rejected', 'Rejected']];
+  if (!dragging) {
+    $('#board').innerHTML = KB.map(([k, label]) => {
+      const list = cands.filter(c => c.stage === k).sort(rank);
+      return `<div class="col" data-stage="${k}"><h3><i style="background:${STAGE_COL[k]}"></i>${label}<span>${list.length}</span></h3>${list.length ? list.map((c, i) => card(c, i + 1)).join('') : '<div class="empty">Drop a candidate here</div>'}</div>`;
+    }).join('');
+    document.querySelectorAll('#board .card').forEach(el => {
+      el.draggable = true;
+      el.ondragstart = e => { dragging = true; el.classList.add('drag'); e.dataTransfer.setData('text/plain', el.dataset.id); };
+      el.ondragend = () => { dragging = false; el.classList.remove('drag'); document.querySelectorAll('#board .col').forEach(c => c.classList.remove('over')); };
+    });
+    document.querySelectorAll('#board .col').forEach(col => {
+      col.ondragover = e => { e.preventDefault(); col.classList.add('over'); };
+      col.ondragleave = () => col.classList.remove('over');
+      col.ondrop = async e => { e.preventDefault(); const id = e.dataTransfer.getData('text/plain'); dragging = false; if (id) { try { await api(`/api/candidates/${id}/stage`, { method: 'POST', body: { stage: col.dataset.stage, recruiter_id: me() } }); } catch (err) { alert(err.message); } load(); } };
+    });
+  }
+
+  const nRej = cands.filter(c => c.stage === 'rejected').length;
+  $('#bulkWrap').innerHTML = nRej ? `<button class="btn" onclick="bulkRej()">Send rejection emails to ${nRej} rejected</button><span id="bulkMsg" style="color:var(--mute);font-size:12px"></span>` : '';
+  // candidates page charts
+  const byRole = Object.entries(allCands.reduce((m, c) => (m[c.job_title] = (m[c.job_title] || 0) + 1, m), {})).map(([label, value]) => ({ label, value }));
+  const bySource = Object.entries(cands.reduce((m, c) => { const s = String(c.source || 'careers').replace(/^csv:/, 'CSV: '); m[s] = (m[s] || 0) + 1; return m; }, {})).map(([label, value], i) => ({ label, value, color: ['#2563eb', '#0f766e', '#7c3aed', '#d97706', '#0891b2', '#be123c'][i % 6] }));
+  $('#chCand').innerHTML = hbars('Applicants per role', byRole) + donut('Where they came from', bySource) + donut('AI verdict', byVerdict);
+
+  // calls page charts
+  const cs = k => calls.filter(x => callState(x) === k).length;
+  const callItems = [['completed', 'Completed', '#0f766e'], ['in_progress', 'In progress', '#2563eb'], ['incomplete', 'Incomplete', '#d97706'], ['abandoned', 'No result (dropped)', '#94a3b8']].map(([k, label, color]) => ({ label, color, value: cs(k) }));
+  const other = calls.length - callItems.reduce((a, i) => a + i.value, 0); if (other > 0) callItems.push({ label: 'Other', color: '#94a3b8', value: other });
+  const done = calls.filter(x => x.duration_sec != null);
+  $('#chCalls').innerHTML = donut('Call outcomes', callItems) + hbars('Calls per role', Object.entries(calls.reduce((m, c) => (m[c.job_title] = (m[c.job_title] || 0) + 1, m), {})).map(([label, value]) => ({ label, value })), '#0f766e') +
+    `<div class="cc"><h4>Call stats</h4><div class="hb" style="grid-template-columns:1fr auto"><span>Calls placed</span><b>${calls.length}</b></div><div class="hb" style="grid-template-columns:1fr auto"><span>Average length</span><b>${done.length ? Math.round(done.reduce((a, x) => a + x.duration_sec, 0) / done.length) + 's' : '-'}</b></div><div class="hb" style="grid-template-columns:1fr auto"><span>Recruiter minutes saved (18 per screen)</span><b>${st.minutes_saved}</b></div></div>`;
+
+  $('#ctable').innerHTML = `<tr><th>Name</th><th>Role</th><th>Stage</th><th>Score</th><th>Verdict</th><th>Recruiter</th><th>Applied</th></tr>` +
+    cands.map(c => `<tr data-id="${c.id}" style="cursor:pointer"><td>${esc(c.name)}</td><td>${esc(c.job_title)}</td><td>${c.stage}</td><td>${c.total ?? '-'}</td><td class="${vclass(c.verdict)}">${esc(c.verdict || '-')}</td><td>${c.helpful === null ? '-' : c.helpful ? '👍' : '👎'}</td><td>${c.created_at.slice(5, 16)}</td></tr>`).join('');
+  document.querySelectorAll('[data-id]').forEach(el => el.onclick = () => show(el.dataset.id));
+  // the open drawer refreshes after each action, not on the poll, so typed input is never wiped
+  const team = await api('/api/team');
+  $('#calls').innerHTML = `<tr><th>Candidate</th><th>Phone</th><th>Role</th><th>Mode</th><th>Status</th><th>Duration</th><th>Turns</th><th>Score</th><th>Started</th></tr>` +
+    (calls.map(x => `<tr data-id="${x.candidate_id}" style="cursor:pointer"><td>${esc(x.name)}</td><td>${esc(maskPhone(x.phone))}</td><td>${esc(x.job_title)}</td><td>${x.mode === 'simulator' ? 'typed (sim)' : 'Dograh ' + x.mode}</td><td>${x.status}</td><td>${x.duration_sec != null ? x.duration_sec + 's' : '-'}</td><td>${x.turns}</td><td class="${vclass(x.verdict)}">${x.total ?? '-'}</td><td>${x.started_at.slice(5, 16)}</td></tr>`).join('') || '<tr><td colspan="9" class="empty">No calls yet</td></tr>');
+  document.querySelectorAll('#calls [data-id]').forEach(el => el.onclick = () => show(el.dataset.id));
+  $('#team').innerHTML = team.map(t => `<div class="jobcard"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:15px">${esc(t.name)}</b>${t.outlier ? `<span class="chip" style="color:${t.outlier === 'high output' ? 'var(--acc)' : 'var(--amber)'}">${t.outlier}</span>` : ''}</div>
+    <div style="color:var(--mute);font-size:12px;margin-bottom:8px">${esc(t.role)} · last active ${t.last_active ? t.last_active.slice(5, 16) : 'never'}</div>
+    ${[['Actions logged', t.actions], ['Candidates touched', t.candidates], ['Notes', t.notes], ['Calls', t.calls], ['Interviews', t.interviews], ['Avg interview rating', t.avg_interview_rating ?? '-'], ['AI screens reviewed', t.reviews], ['Agreed with AI', t.agree_with_ai == null ? '-' : t.agree_with_ai + '%']].map(([k, v]) => `<div class="stat">${k}<b>${v}</b></div>`).join('')}</div>`).join('');
+}
+
+function card(c, rankNo) {
+  const flags = (c.flags || []).slice(0, 2).map(f => `<span class="chip ${f.level}">${esc(f.text)}</span>`).join(' ');
+  return `<div class="card" data-id="${c.id}"><div class="n">${rankNo ? `<span class="rank">${rankNo}</span>` : ''}${esc(c.name)}</div><div class="j">${esc(c.job_title)} · ${esc(c.city)}</div>
+    <div class="meta">${ring(c.total, c.verdict)}<div><div class="${vclass(c.verdict)}" style="font-weight:600;font-size:12px">${esc(c.verdict || 'Pending')}</div>
+    <div style="font-size:11px;color:var(--mute)">${c.helpful === null ? 'not reviewed' : c.helpful ? 'recruiter: helpful' : 'recruiter: not helpful'}</div></div></div>
+    ${c.blocker ? `<div style="margin-top:8px;font-size:11px;color:var(--red)">Can't hire: ${esc(c.blocker)}</div>` : ''}
+    ${(c.outliers || []).length ? `<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">${c.outliers.slice(0, 1).map(o => `<span class="chip ${o.good ? '' : 'amber'}" style="${o.good ? 'color:var(--acc)' : ''}">${o.good ? '▲' : '▼'} outlier</span>`).join('')}</div>` : ''}
+    ${flags ? `<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">${flags}</div>` : ''}</div>`;
+}
+
+async function show(id, quiet) {
+  open = id;
+  const c = await api('/api/candidates/' + id);
+  const s = c.score || { breakdown: [], flags: [] };
+  const scr = c.screenings.find(x => x.status === 'completed') || c.screenings[0];
+  const a = scr?.answers || {};
+  const lastFb = c.feedback[0];
+  const cmp = [['Experience (yrs)', c.years, a.years_experience], ['Notice (days)', c.notice_days, a.notice_days], ['Salary (Rs/mo)', c.expected_salary, a.expected_salary], ['Can work from location', '-', a.relocation_ok === undefined ? undefined : a.relocation_ok ? 'Yes' : 'No'], ['Interview availability', '-', a.availability]];
+  $('#drawer').innerHTML = `
+  <div class="dh">${ring(s.total, s.verdict)}<div><h2>${esc(c.name)}</h2><div style="color:var(--mute);font-size:12px">${esc(c.job.title)} · ${esc(c.city)} · ${esc(c.email)} · ${esc(maskPhone(c.phone))}</div></div><button class="btn x" onclick="closeD()">Close</button></div>
+  <div class="sec"><h4>Verdict</h4><div style="font-size:22px;font-weight:700" class="${vclass(s.verdict)}">${esc(s.verdict || 'Pending')} <span style="color:var(--mute);font-size:14px;font-weight:500">${s.total ?? '-'}/100</span></div>
+    <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${s.flags.map(f => `<span class="chip ${f.level}">${esc(f.text)}</span>`).join('') || '<span class="chip">No flags</span>'}</div></div>
+  ${c.highlights ? `<div class="sec"><h4>Call highlights</h4>
+    <div style="font-weight:600;margin-bottom:6px;color:${c.highlights.impact >= 2 ? 'var(--acc)' : c.highlights.impact === 1 ? 'var(--amber)' : 'var(--red)'}">${c.highlights.impact >= 2 ? 'Specific and convincing: ' + c.highlights.impact + ' results backed by numbers' : c.highlights.impact === 1 ? 'Some proof: 1 result with numbers, the rest was general' : 'Vague: no numbers or results on the call'}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"><span class="chip">${c.highlights.quant} numeric claims</span><span class="chip">${c.highlights.scale} scale details</span><span class="chip">${c.highlights.own} ownership claims</span><span class="chip">${c.highlights.words} words spoken</span></div>
+    ${c.highlights.proof.length ? c.highlights.proof.map(p => `<div style="border-left:3px solid var(--acc);padding:4px 10px;margin:6px 0;color:var(--ink)">&ldquo;${esc(p)}&rdquo;</div>`).join('') : '<div class="empty">No quotable proof points yet</div>'}</div>` : ''}
+  <div class="sec"><h4>Evaluation</h4>
+    <div class="evalbox"><div><h5 class="pro">Pros</h5><ul>${c.evaluation.pros.map(x => `<li>${esc(x)}</li>`).join('') || '<li style="color:var(--mute)">None yet</li>'}</ul></div>
+    <div><h5 class="con">Cons</h5><ul>${c.evaluation.cons.map(x => `<li>${esc(x)}</li>`).join('') || '<li style="color:var(--mute)">None</li>'}</ul></div></div>
+    <h5 style="margin:12px 0 6px;font-size:12px">Outliers vs other applicants for this role</h5>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">${c.evaluation.outliers.map(o => `<span class="chip" style="color:${o.good ? 'var(--acc)' : 'var(--amber)'}">${o.good ? '▲' : '▼'} ${esc(o.text)}</span>`).join('') || '<span class="chip">Nothing unusual vs the pool (needs 3+ applicants)</span>'}</div>
+    ${c.evaluation.blocker ? `<div class="blocker"><b>Can't hire, score ${c.evaluation.hire_score}/100:</b> ${esc(c.evaluation.blocker)}</div>` : scr && scr.status === 'completed' ? `<div class="hireok"><b>No blocker.</b> Hire score ${c.evaluation.hire_score}/100.</div>` : ''}</div>
+  <div class="sec"><h4>Work log</h4>
+    <div class="worklog"><select id="wlKind"><option value="note">Note</option><option value="call">Call</option><option value="interview">Interview</option></select>
+    <input id="wlText" placeholder="What happened?"><select id="wlRating"><option value="">Rating</option>${[1, 2, 3, 4, 5].map(n => `<option>${n}</option>`).join('')}</select><button class="btn" onclick="logWork()">Log</button></div>
+    <div id="wlErr" style="color:var(--red);font-size:12px;margin-top:6px"></div>
+    ${c.activities.map(a => `<div class="ev"><b>${esc(a.recruiter_name || 'System')}</b> · ${a.kind}${a.rating ? ` ${a.rating}/5` : ''} · ${esc(a.text)} · ${a.created_at.slice(5, 16)}</div>`).join('') || '<div class="empty">No work logged yet</div>'}</div>
+  <div class="sec"><h4>Was this AI screen helpful?</h4><div class="fb">
+    <button class="btn yes ${lastFb && lastFb.helpful ? 'on' : ''}" onclick="fb(true)">👍 Yes</button>
+    <button class="btn no ${lastFb && !lastFb.helpful ? 'on' : ''}" onclick="fb(false)">👎 No</button>
+    <input id="fbNote" placeholder="What did it get right or wrong?"></div>
+    ${c.feedback.map(f => `<div class="ev">${f.helpful ? '👍' : '👎'} ${esc(f.note || '')} <span>${f.created_at.slice(5, 16)}</span></div>`).join('')}</div>
+  <div class="sec"><h4>Score breakdown</h4>${s.breakdown.map(b => `<div class="bar"><span>${esc(b.label)}</span><div class="track"><b style="width:${b.points / b.max * 100}%"></b></div><span style="text-align:right">${b.points}/${b.max}</span><em>${esc(b.note)}</em></div>`).join('')}</div>
+  <div class="sec"><h4>Form vs call</h4><table><tr><th></th><th>Form</th><th>AI call</th></tr>${cmp.map(([k, f, v]) => `<tr><td>${k}</td><td>${esc(f ?? '-')}</td><td>${esc(v ?? '-')}</td></tr>`).join('')}</table>
+    ${a.skill_example ? `<div style="margin-top:10px;color:var(--mute);font-size:12px">Role example</div><div style="margin-top:4px">${esc(a.skill_example)}</div>` : ''}</div>
+  ${c.stage === 'rejected' ? `<div class="sec"><h4>Rejection</h4><div style="color:var(--mute);font-size:12px;margin-bottom:8px">Email is the recommended way: a personal note with the main reason and one real positive. A phone call is also available for senior roles. You confirm every send.</div><div id="rejEmail" style="margin-bottom:12px"></div><button class="btn" onclick="rejCall()">Or call to deliver the decision</button> <span id="rejMsg" style="color:var(--mute);font-size:12px"></span></div>` : ''}
+  <div class="sec"><h4>Move stage</h4><div class="stages">${['review', 'shortlisted', 'interview', 'hired', 'rejected'].map(x => `<button class="btn" onclick="stage('${x}')" ${c.stage === x ? 'style="border-color:var(--acc)"' : ''}>${x}</button>`).join('')}</div></div>
+  <div class="sec"><h4>Transcript ${scr ? `<span class="chip">${scr.mode === 'simulator' ? 'simulated, typed' : 'Dograh ' + scr.mode}${scr.run_id ? ' · run ' + esc(scr.run_id) : ''}</span>` : ''}</h4>
+    <div class="tr">${scr && scr.transcript.length ? scr.transcript.map(m => `<div class="m ${m.role === 'agent' ? 'agent' : 'candidate'}">${esc(m.text)}</div>`).join('') : '<div class="empty">No screening yet</div>'}</div></div>
+  <div class="sec"><h4>Timeline</h4>${c.events.map(e => `<div class="ev"><b>${esc(e.detail)}</b> · ${e.at.slice(5, 16)}</div>`).join('')}</div>`;
+  if (c.stage === 'rejected') loadRejEmail(id);
+  if (!quiet) $('#drawer').classList.add('open');
+}
+function closeD() { open = null; $('#drawer').classList.remove('open'); }
+const me = () => $('#who').value;
+async function fb(helpful) { await api(`/api/candidates/${open}/feedback`, { method: 'POST', body: { helpful, note: $('#fbNote').value, recruiter_id: me() } }); await load(); show(open, true); }
+async function stage(s) { await api(`/api/candidates/${open}/stage`, { method: 'POST', body: { stage: s, recruiter_id: me() } }); await load(); show(open, true); }
+async function logWork() {
+  $('#wlErr').textContent = '';
+  try { await api(`/api/candidates/${open}/activities`, { method: 'POST', body: { recruiter_id: me(), kind: $('#wlKind').value, text: $('#wlText').value, rating: $('#wlRating').value || null } }); show(open, true); load(); }
+  catch (e) { $('#wlErr').textContent = e.message; }
+}
+async function loadRejEmail(id) {
+  const el = $('#rejEmail'); if (!el) return;
+  try {
+    const r = await api(`/api/candidates/${id}/rejection-email`);
+    el.innerHTML = `<div style="font-size:12px;color:var(--mute);margin-bottom:6px">To <b>${esc(r.to)}</b> ${r.sent_at ? '<span class="chip">sent ' + esc(String(r.sent_at).slice(5, 16)) + '</span>' : ''} ${!r.configured ? '<span class="chip amber">email not set up</span>' : !r.allowed ? '<span class="chip amber">locked to demo allowlist</span>' : ''}</div>
+      <input id="remSubj" value="${esc(r.subject)}" style="width:100%;margin-bottom:6px;padding:8px;border:1px solid var(--line);border-radius:9px;font:inherit">
+      <textarea id="remText" rows="12" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:9px;font:inherit;line-height:1.5">${esc(r.text)}</textarea>
+      <div style="margin-top:8px;display:flex;gap:8px;align-items:center"><button class="btn acc" onclick="sendRejEmail(${r.sent_at ? 'true' : 'false'})">${r.sent_at ? 'Send again' : 'Send rejection email'}</button><span id="remMsg" style="color:var(--mute);font-size:12px"></span></div>`;
+  } catch (e) { el.innerHTML = `<span style="color:var(--red);font-size:12px">${esc(e.message)}</span>`; }
+}
+async function sendRejEmail(resend) {
+  if (!confirm('Send this rejection email now? It goes to the candidate and cannot be unsent.')) return;
+  $('#remMsg').textContent = 'Sending...';
+  try { const r = await api(`/api/candidates/${open}/rejection-email`, { method: 'POST', body: { confirm: true, resend, subject: $('#remSubj').value, text: $('#remText').value } }); $('#remMsg').textContent = 'Sent to ' + r.to; load(); show(open, true); }
+  catch (e) { $('#remMsg').textContent = e.message; }
+}
+async function bulkRej() {
+  if (!confirm('Send the personal rejection email to every rejected candidate who has not had one yet (up to 25 per click)? You cannot unsend emails.')) return;
+  $('#bulkMsg').textContent = 'Sending...';
+  try { const r = await api('/api/rejection-emails/send', { method: 'POST', body: { confirm: true, job_id: roleSel || undefined } }); $('#bulkMsg').textContent = `${r.sent} sent, ${r.already} already emailed, ${r.locked} skipped (locked to allowlist), ${r.no_email} without an email${r.failed ? ', ' + r.failed + ' failed: ' + r.errors[0] : ''}${r.remaining ? ', ' + r.remaining + ' more waiting, click again' : ''}.`; load(); }
+  catch (e) { $('#bulkMsg').textContent = e.message; }
+}
+async function rejCall() {
+  if (!confirm('The AI will phone this candidate now to tell them they were not selected. Continue?')) return;
+  $('#rejMsg').textContent = 'Calling...';
+  try { const r = await api(`/api/candidates/${open}/rejection-call`, { method: 'POST', body: { confirm: true, force: location.search.includes('demo=1') } }); $('#rejMsg').textContent = 'Call started. Reason it will give: ' + r.reason_short + '.'; load(); }
+  catch (e) { $('#rejMsg').textContent = e.message; }
+}
+document.addEventListener('keydown', e => e.key === 'Escape' && closeD());
+
+document.querySelectorAll('#nav a[data-v]').forEach(a => a.onclick = () => {
+  document.querySelectorAll('#nav a').forEach(x => x.classList.toggle('on', x === a));
+  document.querySelectorAll('.tabview').forEach(v => v.classList.toggle('on', v.id === 'v-' + a.dataset.v));
+});
+
+async function meta() {
+  cfg = await api('/api/config');
+  if (cfg.brand) { $('#brandName').textContent = cfg.brand.toUpperCase(); $('#brandMark').textContent = cfg.brand[0].toUpperCase(); document.title = cfg.brand; }
+  const recs = await api('/api/recruiters');
+  let saved = null; try { saved = localStorage.getItem('rs_who'); } catch {}
+  $('#who').innerHTML = recs.map(r => `<option value="${r.id}" ${r.id === saved ? 'selected' : ''}>${esc(r.name)}</option>`).join('');
+  $('#who').onchange = () => { try { localStorage.setItem('rs_who', me()); } catch {} };
+  const AUTO = [['Job post + screening questions from the JD', 'Automate', 'AI drafts, recruiter approves once per role'], ['Instant call to every applicant', 'Automate', 'Dograh calls within minutes, retries, SMS'], ['Knockout questions + scoring', 'Automate', 'Rules decide, reasons shown for every point'], ['Rejecting clear knockouts', 'Automate, with sampling', 'Recruiter spot-checks 1 in 10 each week'], ['Interview booking, reminders, no-show rescue', 'Automate', 'Calendar + reminder calls'], ['Reference checks, document chasing', 'Automate', 'Calls and WhatsApp, answers into fields'], ['Borderline candidates (Maybe, 55 to 74)', 'Human decides', 'AI summary helps, a person calls'], ['The real interview', 'Human', 'AI books it and takes notes, people judge fit'], ['Final hire / reject on shortlisted people', 'Human', 'Never let the model make the final call'], ['Offer, salary negotiation', 'Human', 'Relationship and money, keep it personal'], ['Offer acceptance + joining reminders', 'Automate', 'Calls the week and day before joining']];
+  $('#criteria').innerHTML = `<div class="jobcard"><b style="font-size:16px">Scoring criteria, 100 points</b>${cfg.criteria.map(c => `<div class="stat" style="align-items:flex-start;gap:14px"><span style="color:var(--ink);min-width:140px">${esc(c.label)} <span class="chip">${c.max}</span></span><span style="flex:1;text-align:left">${esc(c.rule)}</span></div>`).join('')}
+    <p style="color:var(--mute);margin-top:12px">Verdict: 75+ Strong, 55 to 74 Maybe, under 55 Reject. Any red knockout forces Reject and becomes the "can't hire" reason. Outliers compare each person with the median of other applicants for the same role (needs 3+).</p></div>
+    <div class="jobcard"><b style="font-size:16px">Where automation stops</b><table style="margin-top:8px"><tr><th>Step</th><th>Who</th><th>How</th></tr>${AUTO.map(([a, b, c]) => `<tr><td>${a}</td><td style="color:${b.startsWith('Human') ? 'var(--amber)' : 'var(--acc)'}">${b}</td><td style="color:var(--mute)">${c}</td></tr>`).join('')}</table></div>`;
+  const jobs = await api('/api/jobs');
+  const configured = cfg.dograh_phone || cfg.dograh_web;
+  const live = configured && cfg.dograh_api_live;
+  $('#pillVoice').innerHTML = `<span class="dot ${live ? 'g' : 'a'}"></span>Dograh ${live ? 'API live' : configured ? 'configured, API offline' : 'not configured'}`;
+  $('#voiceFoot').innerHTML = `<b style="color:var(--ink)">Voice link</b><br>API: ${cfg.dograh_api_live ? 'live' : 'offline'} · Phone: ${cfg.dograh_phone ? 'configured' : 'off'} · Web: ${cfg.dograh_web ? 'configured' : 'off'}`;
+  $('#jobsList').innerHTML = jobs.map(j => `<div class="jobcard"><b style="font-size:16px">${esc(j.title)}</b> <span class="chip">${esc(j.location)}</span>
+    <p style="color:var(--mute)">${esc(j.description)}</p><div class="stages"><span class="chip">${j.min_years}+ yrs</span><span class="chip">Budget Rs ${j.max_salary.toLocaleString('en-IN')}/mo</span><span class="chip">Notice ≤ ${j.max_notice_days}d</span>${j.must_skills.map(s => `<span class="chip">${esc(s)}</span>`).join('')}</div></div>`).join('');
+  $('#voiceInfo').innerHTML = `<b style="font-size:16px">Dograh screening agent</b><p style="color:var(--mute)">Base URL: ${esc(cfg.dograh_base || 'not set')}</p>
+    <p style="color:var(--mute)">Webhook to add in the Dograh workflow: <code>${location.origin}/api/webhooks/dograh</code> (must be publicly reachable, use a tunnel for local testing).</p>
+    <p style="color:var(--mute)">Questions the agent asks:</p><ol>${cfg.questions.map(q => `<li style="margin:4px 0">${esc(q.ask)} <span class="chip">${q.key}</span></li>`).join('')}</ol>`;
+}
+meta(); load(); setInterval(load, 4000);
+</script>
+<script src="/suite.js"></script>
+</body>
+</html>

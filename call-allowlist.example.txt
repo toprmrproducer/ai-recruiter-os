@@ -1,0 +1,4 @@
+# One E.164 number per line. The CSV call queue only dials numbers listed here
+# (or in IMPORT_CALL_ALLOWLIST) until you set IMPORT_CALL_ANY=1.
+# Copy to call-allowlist.txt and add your own number to test.
++910000000000

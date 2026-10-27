@@ -1,0 +1,14 @@
+services:
+  recruiter:
+    build: .
+    ports:
+      - "${PORT:-4870}:4870"
+    env_file:
+      - .env
+    environment:
+      DB_PATH: /data/recruiting.db
+      PORT: "4870"
+    volumes:
+      - ./data:/data
+      - ./call-allowlist.txt:/app/call-allowlist.txt:ro
+    restart: unless-stopped
