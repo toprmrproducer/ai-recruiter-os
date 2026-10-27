@@ -26,7 +26,7 @@
   // ------------------------------------------------------------ nav + tabs
   const nav = q('#nav');
   nav.querySelector('a[data-v=jobs]')?.remove(); // the old read-only Jobs view stays in the DOM (hidden) because the dashboard script still fills it
-  const TABS = [['jobs2', '◇', 'Roles and jobs'], ['import', '⇪', 'Import leads'], ['settings', '⚙', 'Settings'], ['guide', '?', 'How to use'], ['interviews', '◷', 'Interviews'], ['offers', '✎', 'Offers'], ['automation', '⚙', 'Automation'], ['analytics', '▤', 'Analytics'], ['assistant', '✦', 'Assistant']];
+  const TABS = [['jobs2', '◇', 'Roles and jobs'], ['import', '⇪', 'Import leads'], ['settings', '🔑', 'Keys and secrets'], ['guide', '?', 'How to use'], ['interviews', '◷', 'Interviews'], ['offers', '✎', 'Offers'], ['automation', '⚙', 'Automation'], ['analytics', '▤', 'Analytics'], ['assistant', '✦', 'Assistant']];
   const anchor = nav.querySelector('.navsec');
   let current = null;
   for (const [id, icon, label] of TABS) {
@@ -132,10 +132,21 @@
       return `<div><label style="display:block;font-size:12px;font-weight:600;margin:0 0 4px">${esc(f.label)} ${src}</label>${input}${f.help ? `<div style="font-size:11px;color:var(--mute);margin-top:3px">${esc(f.help)}</div>` : ''}</div>`;
     };
     const input_style = `${input};width:100%`;
-    const group = g => `<div class="jobcard"><b style="font-size:16px">${esc(g.title)}</b><p style="color:var(--mute);margin:4px 0 10px">${esc(g.help)}</p>
+    const group = g => `<div class="jobcard" id="sg-${g.id}"><b style="font-size:16px">${esc(g.title)}</b><p style="color:var(--mute);margin:4px 0 10px">${esc(g.help)}</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;max-width:900px">${s.fields.filter(f => f.group === g.id).map(field).join('')}</div>
       <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">${btn('Save', `sSetSave('${g.id}')`, 'acc')}${g.id === 'voice' ? btn('Test the connection', "sSetTest('dograh')") : ''}${g.id === 'email' ? btn('Test the mailbox login', "sSetTest('email')") : ''}<span id="sm-${g.id}" style="font-size:12px;color:var(--mute)"></span></div></div>`;
     v.innerHTML = `${!s.can_manage ? `<div class="jobcard" style="border-color:#fca5a5;background:#fef2f2"><b>Settings are read only here.</b><div style="color:#7f1d1d;margin-top:4px">This dashboard is open to the internet without a password, so secrets cannot be edited. Open the dashboard on the computer that runs it (http://localhost) and set a Dashboard password under Dashboard security first.</div></div>` : ''}
+      <div class="jobcard"><b style="font-size:18px">Where every key goes</b><p style="color:var(--mute);margin:4px 0 10px">Every secret lives on this page, saved encrypted inside the app. Nothing goes in a code file. Find the service you need, get the key from the link, press Go to, paste it in the box and Save.</p>
+        <table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="text-align:left;color:var(--mute);font-size:11px;text-transform:uppercase;letter-spacing:.04em"><th style="padding:6px 8px">Key</th><th style="padding:6px 8px">What it does</th><th style="padding:6px 8px">Get it from</th><th style="padding:6px 8px">Status</th><th></th></tr></thead><tbody>
+        ${[
+          ['Dograh address and API key', 'Voice engine that places the calls', 'Your Dograh dashboard, Settings, API keys', isSet('DOGRAH_BASE_URL') && isSet('DOGRAH_API_KEY'), 'sg-voice', true],
+          ['Twilio SID, token and number', 'The phone line calls go out on', 'console.twilio.com (Account Info)', phoneOk, 'sg-phone', true],
+          ['AI voice model key', 'The realtime model that talks to applicants', s.caps?.voice_override ? 'Google AI Studio or OpenAI platform' : 'Dograh, Settings, Models', modelOk, s.caps?.voice_override ? 'sg-model' : 'sg-voice', true],
+          ['Email (SMTP) login', 'Sends rejection emails', 'Your mailbox provider (Hostinger, Google, Zoho)', s.mail_ready, 'sg-email', false],
+          ['Writing helper keys', 'Job drafts and resume analysis (Groq, Z.ai, Anthropic, Grok)', 'console.groq.com, console.anthropic.com, ...', ['GROQ_API_KEY','ZAI_API_KEY','ANTHROPIC_API_KEY','XAI_API_KEY','LLM_CUSTOM_URL'].some(isSet), 'sg-ai', false],
+          ['Dashboard password', 'Keeps strangers out of this dashboard', 'You choose it', s.password_set, 'sg-security', true],
+        ].map(([k, d, w, ok, id, req]) => `<tr style="border-top:1px solid var(--line)"><td style="padding:8px"><b>${k}</b>${req ? '' : ' <span class="chip">optional</span>'}</td><td style="padding:8px;color:var(--mute)">${d}</td><td style="padding:8px;color:var(--mute)">${w}</td><td style="padding:8px;white-space:nowrap">${ok ? '<b style="color:var(--acc)">✓ Saved</b>' : '<span style="color:var(--amber)">Not set</span>'}</td><td style="padding:8px">${btn('Go to', `document.getElementById('${id}')?.scrollIntoView({behavior:'smooth',block:'start'})`)}</td></tr>`).join('')}
+        </tbody></table></div>
       <div class="jobcard"><b style="font-size:18px">Setup checklist</b><p style="color:var(--mute);margin:4px 0 8px">Work top to bottom. Everything is saved in this app, you never edit a file.</p>
         ${tick(s.password_set, 'Dashboard password', s.password_set ? 'Set.' : 'Not set. Save one under Dashboard security below, especially before going online.')}
         ${tick(isSet('DOGRAH_BASE_URL') && isSet('DOGRAH_API_KEY'), '1. Connect your voice engine (Dograh)', 'Install Dograh (one Docker command, see the README), then save its address and API key below and press Test the connection.')}
@@ -145,17 +156,17 @@
         ${tick(s.mail_ready, '5. Email (optional)', s.mail_ready ? 'Mailbox saved.' : 'Only needed for rejection emails.')}
         ${tick(!s.calls_locked, '6. Production calling (when you are ready)', s.calls_locked ? 'Locked: only numbers on the list below can be called. This is the safe default.' : '<b style="color:var(--amber)">ON: any applicant can be called.</b>')}</div>
       ${s.groups.filter(g => g.id === 'security' || g.id === 'brand' || g.id === 'voice').map(group).join('')}
-      <div class="jobcard"><b style="font-size:16px">Phone provider (Twilio)</b><p style="color:var(--mute);margin:4px 0 10px">Sent straight to Dograh. Not stored in this app. ${st.connected ? '' : '<b>Connect Dograh first.</b>'}</p>
+      <div class="jobcard" id="sg-phone"><b style="font-size:16px">Phone provider (Twilio)</b><p style="color:var(--mute);margin:4px 0 10px">Sent straight to Dograh. Not stored in this app. ${st.connected ? '' : '<b>Connect Dograh first.</b>'}</p>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 16px;max-width:900px">
           <div><label style="display:block;font-size:12px;font-weight:600;margin:0 0 4px">Twilio Account SID</label><input id="tw-sid" placeholder="AC..." style="${input_style}"></div>
           <div><label style="display:block;font-size:12px;font-weight:600;margin:0 0 4px">Twilio Auth Token</label><input id="tw-tok" type="password" autocomplete="new-password" style="${input_style}"></div>
           <div><label style="display:block;font-size:12px;font-weight:600;margin:0 0 4px">Number calls come from</label><input id="tw-num" placeholder="+14155550123" style="${input_style}"></div></div>
         <div style="margin-top:12px">${btn('Connect Twilio', 'sSetPhone()', 'acc')} <span id="sm-phone" style="font-size:12px;color:var(--mute)"></span></div></div>
-      ${s.caps?.voice_override ? `<div class="jobcard"><b style="font-size:16px">AI voice model</b><p style="color:var(--mute);margin:4px 0 10px">The realtime voice model that talks to applicants. Sent straight to Dograh. Not stored in this app.</p>
+      ${s.caps?.voice_override ? `<div class="jobcard" id="sg-model"><b style="font-size:16px">AI voice model</b><p style="color:var(--mute);margin:4px 0 10px">The realtime voice model that talks to applicants. Sent straight to Dograh. Not stored in this app.</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;max-width:900px">
           <div><label style="display:block;font-size:12px;font-weight:600;margin:0 0 4px">Provider</label><select id="vm-prov" style="${input_style}"><option value="google_realtime">Google realtime voice</option><option value="openai_realtime">OpenAI realtime voice</option></select></div>
           <div><label style="display:block;font-size:12px;font-weight:600;margin:0 0 4px">API key</label><input id="vm-key" type="password" autocomplete="new-password" style="${input_style}"></div></div>
-        <div style="margin-top:12px">${btn('Save voice model', 'sSetModel()', 'acc')} <span id="sm-model" style="font-size:12px;color:var(--mute)"></span></div></div>` : `<div class="jobcard"><b style="font-size:16px">AI voice model</b><p style="color:var(--mute);margin:4px 0 0">${s.caps?.reachable ? 'Your Dograh keeps its voice model in its own dashboard. Open Dograh, go to <b>Settings &gt; Models</b>, pick a realtime voice model and paste its key there. This app does not store that key.' : 'Connect Dograh above first.'}</p></div>`}
+        <div style="margin-top:12px">${btn('Save voice model', 'sSetModel()', 'acc')} <span id="sm-model" style="font-size:12px;color:var(--mute)"></span></div></div>` : `<div class="jobcard" id="sg-model"><b style="font-size:16px">AI voice model</b><p style="color:var(--mute);margin:4px 0 0">${s.caps?.reachable ? 'Your Dograh keeps its voice model in its own dashboard. Open Dograh, go to <b>Settings &gt; Models</b>, pick a realtime voice model and paste its key there. This app does not store that key.' : 'Connect Dograh above first.'}</p></div>`}
       ${s.groups.filter(g => g.id === 'safety' || g.id === 'email' || g.id === 'ai').map(group).join('')}`;
     Object.entries(keep).forEach(([k, val]) => { const el = v.querySelector(`[data-skey="${k}"]`); if (el && el.type !== 'checkbox' && el.type !== 'password' && el.value !== val && document.activeElement !== el) { /* keep what the server says */ } });
   }

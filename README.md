@@ -53,7 +53,7 @@ Everything works without any keys except real phone calls. **You never edit a `.
 
 ## Connect the voice engine (Settings page)
 
-The Settings page walks you through it. Keys and passwords you save there are stored **encrypted** in the app's database and are never shown again (only the last 4 characters).
+The **Keys and secrets** tab (left menu) lists every key, where to get it and whether it is saved, with a Go to button for each, then walks you through it. Keys and passwords you save there are stored **encrypted** in the app's database and are never shown again (only the last 4 characters).
 
 1. **Install Dograh**, the open-source voice engine that places the calls: <https://github.com/dograh-hq/dograh> (one Docker command). Create your account and an API key (Dograh dashboard, Settings, API keys).
 2. In this app: **Settings > Voice engine**: paste the Dograh address and API key, press **Test the connection**.
